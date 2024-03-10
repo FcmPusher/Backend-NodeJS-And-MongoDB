@@ -1,15 +1,19 @@
 FROM node:alpine
 
-RUN mkdir -p /usr/src/node-app && chown -R node:node /usr/src/node-app
+# Set the working directory inside the container
+WORKDIR /usr/src/app
 
-WORKDIR /usr/src/node-app
+# Copy package.json and package-lock.json to the container
+COPY package*.json ./
 
-COPY package.json yarn.lock ./
-
-USER node
-
+# Install application dependencies
 RUN npm install
 
-COPY --chown=node:node . .
+# Copy the rest of your application code to the container
+COPY . .
 
+# Expose the port your application listens on
 EXPOSE 3000
+
+# Define the command to run your application
+CMD ["yarn", "dev"]
