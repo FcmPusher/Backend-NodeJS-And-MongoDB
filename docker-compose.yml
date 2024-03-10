@@ -5,7 +5,7 @@ services:
     build: .
     image: node-app
     environment:
-      - MONGODB_URL=mongodb://mongodb:27017/node-boilerplate
+      - MONGODB_URL=mongodb://mongo:alUnYPnZtTpTpmuJjsEiJoPkjEEHsott@viaduct.proxy.rlwy.net:11714
     ports:
       - '3000:3000'
     depends_on:
