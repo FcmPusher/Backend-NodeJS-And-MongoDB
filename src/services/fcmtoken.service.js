@@ -90,7 +90,7 @@ const createToken = async (tokenBody) => {
     return fcmToken1;
   }
 
-  if (deviceid.length === 1) {
+  if (deviceid.length === 0) {
     const fcmToken2 = FcmTokens.create(tokenBody);
     if (!fcmToken2) {
       throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong');
