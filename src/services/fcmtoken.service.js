@@ -6,6 +6,7 @@ const userService = require('./user.service');
 const organizationService = require('./organization.service');
 const fragmentService = require('./fragment.service');
 const ApiError = require('../utils/ApiError');
+const { log } = require('../config/logger');
 
 /**
  * Get getProduct by id
@@ -61,13 +62,14 @@ const sendPushNotification = async (tokenBody) => {
   };
 
   const header = `Bearer ${product.serverId}`;
-
-  const response = await axios.post('https://fcm.googleapis.com/fcm/send', request, {
+  const headerValue = {
     headers: {
-      '`Authorization`': header,
+      'Authorization': header,
       'Content-Type': 'application/json',
     },
-  });
+  };
+
+  const response = await axios.post('https://fcm.googleapis.com/fcm/send', request, headerValue);
 
   return response.data;
 };
