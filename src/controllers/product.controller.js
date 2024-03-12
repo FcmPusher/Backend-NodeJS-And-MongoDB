@@ -9,7 +9,7 @@ const createProduct = catchAsync(async (req, res) => {
 });
 
 const getProduct = catchAsync(async (req, res) => {
-  const org = await productService.getProduct(req.params.userId);
+  const org = await productService.getProduct(req.params.orgId);
   res.status(httpStatus.OK).send(org);
 });
 

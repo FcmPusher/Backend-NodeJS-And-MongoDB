@@ -35,11 +35,22 @@ const createFragment = async (fragmentBody) => {
   if (!user) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'User not found');
   }
-  const fragment = Fragment.create(fragmentBody);
-  if (fragment == null) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong');
+
+  const fragmentExist = await getFragmentById(fragmentBody.id);
+  if (fragmentExist) {
+    const fragment = Fragment.updateOne(fragmentBody);
+    if (fragment == null) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong');
+    }
+    return fragment;
   }
-  return fragment;
+  if (!fragmentExist) {
+    const fragment = Fragment.create(fragmentBody);
+    if (fragment === null) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong');
+    }
+    return fragment;
+  }
 };
 
 /**

@@ -7,7 +7,7 @@ const fcmtokenController = require('../../controllers/fcmtoken.controller');
 const router = express.Router();
 
 router.post('/create', validate(fcmtokenValidation.createFCMToken), fcmtokenController.registerFCMToken);
-
+router.post('/notifications', fcmtokenController.sendNotification);
 module.exports = router;
 
 /**

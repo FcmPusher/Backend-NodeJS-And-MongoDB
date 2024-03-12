@@ -5,6 +5,7 @@ const createFCMToken = {
   body: Joi.object().keys({
     token: Joi.string().required(),
     product: Joi.string().required(),
+    deviceId: Joi.string().required(),
   }),
 };
 

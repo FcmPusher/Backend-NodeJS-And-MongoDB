@@ -1,9 +1,11 @@
+const axios = require('axios');
 const httpStatus = require('http-status');
 const Product = require('../models/product.model');
+const FcmTokens = require('../models/fcmtoken.model');
 const userService = require('./user.service');
 const organizationService = require('./organization.service');
+const fragmentService = require('./fragment.service');
 const ApiError = require('../utils/ApiError');
-const { FcmToken } = require('../models');
 
 /**
  * Get getProduct by id
@@ -14,6 +16,61 @@ const getProductById = async (id) => {
   return Product.findById(id);
 };
 
+const getFcmTokenDeviceId = async (id) => {
+  return FcmTokens.find({ deviceId: id });
+};
+
+const getFcmTokenByProductId = async (id) => {
+  return FcmTokens.find({ product: id });
+};
+
+const getOrgById = async (id) => {
+  return organizationService.getOrgById(id);
+};
+
+const sendPushNotification = async (tokenBody) => {
+  const product = await getProductById(tokenBody.product);
+  if (!product) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Product not found');
+  }
+  const org = await getOrgById(tokenBody.orgId);
+  if (!org) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Org not found');
+  }
+
+  const fragment = await fragmentService.getFragmentById(tokenBody.campaignId);
+  if (!fragment) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Campaign not found');
+  }
+
+  const fcmTokenList = await getFcmTokenByProductId(tokenBody.product);
+  if (!fcmTokenList) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'FCM token not found');
+  }
+
+  const tokenList = [];
+
+  fcmTokenList.forEach((element) => {
+    tokenList.push(element.token);
+  });
+
+  const request = {
+    registration_ids: tokenList,
+    notification: JSON.parse(fragment.notification),
+    data: JSON.parse(fragment.data),
+  };
+
+  const header = `Bearer ${product.serverId}`;
+
+  const response = await axios.post('https://fcm.googleapis.com/fcm/send', request, {
+    headers: {
+      '`Authorization`': header,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  return response.data;
+};
 /**
  * Create a Product
  * @param {Object} orgBody
@@ -21,15 +78,25 @@ const getProductById = async (id) => {
  */
 const createToken = async (tokenBody) => {
   const product = await getProductById(tokenBody.product);
-
+  const deviceid = await getFcmTokenDeviceId(tokenBody.deviceId);
   if (!product) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Product not found');
   }
-  const fcmToken = FcmToken.create(tokenBody);
-  if (!fcmToken) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong');
+  if (deviceid.length > 0) {
+    const fcmToken1 = FcmTokens.updateOne(tokenBody);
+    if (!fcmToken1) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong');
+    }
+    return fcmToken1;
   }
-  return fcmToken;
+
+  if (deviceid.length === 1) {
+    const fcmToken2 = FcmTokens.create(tokenBody);
+    if (!fcmToken2) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong');
+    }
+    return fcmToken2;
+  }
 };
 /**
  * Get Product List by userId
@@ -116,4 +183,5 @@ module.exports = {
   deleteProduct,
   getProductById,
   queryProduct,
+  sendPushNotification,
 };

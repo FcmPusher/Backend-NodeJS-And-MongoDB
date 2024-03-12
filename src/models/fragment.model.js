@@ -3,7 +3,7 @@ const { toJSON, paginate } = require('./plugins');
 
 const fragmentSchema = mongoose.Schema(
   {
-    message: {
+    notification: {
       type: String,
       required: true,
       index: true,

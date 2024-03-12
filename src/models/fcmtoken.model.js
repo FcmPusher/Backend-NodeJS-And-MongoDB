@@ -8,6 +8,11 @@ const fcmTokenSchema = mongoose.Schema(
       required: true,
       index: true,
     },
+    deviceId: {
+      type: String,
+      required: true,
+      index: true,
+    },
     product: {
       type: mongoose.SchemaTypes.ObjectId,
       ref: 'Product',

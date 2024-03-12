@@ -8,6 +8,11 @@ const registerFCMToken = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(org);
 });
 
+const sendNotification = catchAsync(async (req, res) => {
+  const sendPushNotification = await fcmtokenService.sendPushNotification(req.body);
+  res.status(httpStatus.OK).send(sendPushNotification);
+});
+
 const getOrganization = catchAsync(async (req, res) => {
   const org = await organizationService.getOrganization(req.params.userId);
   res.status(httpStatus.OK).send(org);
@@ -35,4 +40,5 @@ module.exports = {
   updateOrganization,
   deleteOrganization,
   getOrganizations,
+  sendNotification,
 };

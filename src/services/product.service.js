@@ -13,6 +13,10 @@ const getProductById = async (id) => {
   return Product.findById(id);
 };
 
+const getProductByOrgId = async (id) => {
+  return Product.find({ [Product.organization]: id });
+};
+
 /**
  * Create a Product
  * @param {Object} orgBody
@@ -63,7 +67,7 @@ const queryProduct = async (filter, options) => {
  * @returns {Promise<Product>}
  */
 const getProduct = async (id) => {
-  const product = await getProductById(id);
+  const product = await getProductByOrgId(id);
   if (!product) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
   }
