@@ -10,7 +10,7 @@ branches:
 env:
   global:
     - PORT=3000
-    - MONGODB_URL=mongodb://mongo:alUnYPnZtTpTpmuJjsEiJoPkjEEHsott@viaduct.proxy.rlwy.net:11714
+    - MONGODB_URL=mongodb+srv://kamleshknskumawat:McsDKrtl34XJ4V8j@fcmpusher.bm0vynn.mongodb.net/?retryWrites=true&w=majority&appName=fcmpusher
     - JWT_SECRET=thisisasamplesecret
     - JWT_ACCESS_EXPIRATION_MINUTES=30
     - JWT_REFRESH_EXPIRATION_DAYS=30

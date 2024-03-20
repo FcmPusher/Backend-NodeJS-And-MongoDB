@@ -5,7 +5,7 @@ services:
     build: .
     image: node-app
     environment:
-      - MONGODB_URL=mongodb://mongo:alUnYPnZtTpTpmuJjsEiJoPkjEEHsott@viaduct.proxy.rlwy.net:11714
+      - mongodb+srv://kamleshknskumawat:McsDKrtl34XJ4V8j@fcmpusher.bm0vynn.mongodb.net/?retryWrites=true&w=majority&appName=fcmpusher
     ports:
       - '3000:3000'
     depends_on:
