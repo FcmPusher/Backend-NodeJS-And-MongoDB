@@ -4,6 +4,7 @@ const userService = require('./user.service');
 const Token = require('../models/token.model');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
+const { email } = require('../config/config');
 
 /**
  * Login with username and password
@@ -12,7 +13,9 @@ const { tokenTypes } = require('../config/tokens');
  * @returns {Promise<User>}
  */
 const loginUserWithEmailAndPassword = async (email, password) => {
+  console.log(email)
   const user = await userService.getUserByEmail(email);
+  console.log(user)
   if (!user || !(await user.isPasswordMatch(password))) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
@@ -90,10 +93,34 @@ const verifyEmail = async (verifyEmailToken) => {
   }
 };
 
+
+/**
+ * change password
+ * @param {string} resetPasswordToken
+ * @param {string} newPassword
+ * @returns {Promise}
+ */
+const changePassword = async (email, password,newPassword) => {
+  try {
+    console.log("llll");
+    const isUserAvailable=await loginUserWithEmailAndPassword(email,password);
+    console.log("isUser");
+    console.log(isUserAvailable)
+    if (!isUserAvailable) {
+      throw new Error();
+    }
+    await userService.updateUserById(isUserAvailable.id, { password: newPassword });
+    await Token.deleteMany({ user: isUserAvailable.id, type: tokenTypes.RESET_PASSWORD });
+  } catch (error) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Password reset failed');
+  }
+};
+
 module.exports = {
   loginUserWithEmailAndPassword,
   logout,
   refreshAuth,
   resetPassword,
   verifyEmail,
+  changePassword,
 };
