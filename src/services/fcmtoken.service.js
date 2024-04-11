@@ -68,7 +68,8 @@ const sendPushNotification = async (tokenBody) => {
       'Content-Type': 'application/json',
     },
   };
-
+console.log(request);
+console.log(headerValue)
   const response = await axios.post('https://fcm.googleapis.com/fcm/send', request, headerValue);
 
   return response.data;
